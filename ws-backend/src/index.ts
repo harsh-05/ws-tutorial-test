@@ -7,7 +7,7 @@ interface ExtwebSocket extends WebSocket {
 }
 
 let userNUmber = 1;
-wss.on('connection', function connection(ws:ExtwebSocket, ) {
+wss.on('connection', function connection(ws:ExtwebSocket) {
  
     ws.userNumber = userNUmber++;    
 
@@ -16,15 +16,26 @@ wss.on('connection', function connection(ws:ExtwebSocket, ) {
     ws.on('message', (mes) => {
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN && client !== ws) {
-               
+                
                 client.send(`User ${ws.userNumber} sends message : ` + mes.toString());
             }
+            let c = client as ExtwebSocket;
+            
         })
-        console.log("received " + mes.toString());
-        console.log("received " + mes.toLocaleString());
-        console.log("received " + mes);
+        console.log("A message has appeared and size is : " + wss.clients.size);
     });
 
+    console.log("A connection is added and size is : " + wss.clients.size);
+
+    ws.on('close', () => {
+        console.log(`user ${ws.userNumber} has been closed !!`);
+    })
+
+})
+
+wss.on('close', (ws:ExtwebSocket) => {
+   
+    console.log("A connection is closed and currently the user size is" + wss.clients.size);
 })
 
 

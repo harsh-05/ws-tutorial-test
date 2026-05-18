@@ -27,6 +27,7 @@ function App() {
 
   function senddata() {
     const data = JSON.stringify({ type: "increment" });
+    if(wsRef.current?.readyState === WebSocket.OPEN)
     wsRef.current?.send(data);
   }
 

@@ -41,7 +41,7 @@ wss.on("connection", (ws: ExtWebsocket, req) => {
         }
         const zodResult = messData.safeParse(parsed);
         if (!zodResult.success) {
-            ws.send(JSON.stringify({ type: "error", message: zodResult.error.message }));
+            ws.send(JSON.stringify({ type: "error", message: zodResult.error.issues }));
         } else {
             if (zodResult.data.type === "join") {
                 handleJoinUser(clientMap, zodResult.data, ws);
@@ -56,6 +56,7 @@ wss.on("connection", (ws: ExtWebsocket, req) => {
 
     ws.on("close", () => {
         clientMap.delete(ws.username);
+        handleMessage(clientMap, { type: "message", message: `${ws.username} connection lost!` }, ws);
         
     })
 })
